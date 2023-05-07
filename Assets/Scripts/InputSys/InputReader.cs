@@ -33,7 +33,9 @@ public class InputReader : ScriptableObject, ThisPlay.IPlayerActions {
     public Vector2 MovAxis { get; private set; }
 
     public void OnJump(InputAction.CallbackContext context) {
-        PJump?.Invoke();
+        if (context.performed) {
+            PJump?.Invoke();
+        }
     }
 
     public void OnMouseLeft(InputAction.CallbackContext context) {
