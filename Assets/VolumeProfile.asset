@@ -21,7 +21,7 @@ MonoBehaviour:
     m_Value: 30
   vignetteAmount:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 2.33
   vignetteSize:
     m_OverrideState: 1
     m_Value: 0
@@ -128,10 +128,10 @@ MonoBehaviour:
   active: 1
   fogDensity:
     m_OverrideState: 1
-    m_Value: 1.5
+    m_Value: 1
   fogDistance:
     m_OverrideState: 1
-    m_Value: 4.7
+    m_Value: 10
   fogColor:
     m_OverrideState: 1
     m_Value: {r: 0, g: 0, b: 0, a: 0}
@@ -140,19 +140,19 @@ MonoBehaviour:
     m_Value: {r: 0, g: 0, b: 0, a: 0}
   fogNear:
     m_OverrideState: 0
-    m_Value: 0
+    m_Value: 1
   fogFar:
     m_OverrideState: 0
-    m_Value: 81.3
+    m_Value: 100
   fogAltScale:
     m_OverrideState: 0
     m_Value: 10
   fogThinning:
     m_OverrideState: 0
-    m_Value: 458
+    m_Value: 100
   noiseScale:
     m_OverrideState: 1
-    m_Value: 843
+    m_Value: 0
   noiseStrength:
     m_OverrideState: 1
-    m_Value: 0.029
+    m_Value: 0.05
