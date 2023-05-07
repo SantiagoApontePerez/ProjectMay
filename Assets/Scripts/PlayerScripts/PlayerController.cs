@@ -7,17 +7,21 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private InputReader _inputReader;
 
+    #region Variables
+    [SerializeField][Range(0, 10)] private float MovSpeedMultiplier;
+    #endregion
+
     private void OnEnable() {
-        _inputReader.LClick += DebugPrint;
-        _inputReader.RClick += DebugPrint;
-        _inputReader.PJump  += DebugPrint;
+        //_inputReader.LClick += DebugPrint;
+        //_inputReader.RClick += DebugPrint;
+        //_inputReader.PJump  += DebugPrint;
 
     }
 
     private void OnDisable() {
-        _inputReader.LClick -= DebugPrint;
-        _inputReader.RClick -= DebugPrint;
-        _inputReader.PJump  -= DebugPrint;
+        //_inputReader.LClick -= DebugPrint;
+        //_inputReader.RClick -= DebugPrint;
+        //_inputReader.PJump  -= DebugPrint;
     }
 
     // Start is called before the first frame update
@@ -29,13 +33,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        StandardMove();
     }
 
-    void DebugPrint() {
-        Debug.Log("Button Registered");
-        if(_inputReader.MovAxis.x > 0 || _inputReader.MovAxis.y > 0) {
-            Debug.Log("Analog Sensed");
-        }
+    void StandardMove() {
+        Vector3 pMovV3 = new Vector3(_inputReader.MovAxis.x, 0, _inputReader.MovAxis.y);
+        transform.Translate(MovSpeedMultiplier * Time.deltaTime * pMovV3);
     }
 }
