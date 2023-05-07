@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputReader : ThisPlay.IPlayerActions {
+[CreateAssetMenu (fileName = "Input Reader", menuName = "InputReader/Input")]
+public class InputReader : ScriptableObject, ThisPlay.IPlayerActions {
 
     #region Reader Setup
     private ThisPlay _controls;
