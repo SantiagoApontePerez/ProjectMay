@@ -5,7 +5,7 @@ public class CinemachinePOVExtension : CinemachineExtension {
 
     #region InputReader Instance
     [Header("Input Reader Required")]
-    [SerializeField] private InputReader _inputReader;
+    [SerializeField] private InputReader inputReader;
     #endregion
 
     #region Clamps
@@ -28,7 +28,7 @@ public class CinemachinePOVExtension : CinemachineExtension {
                 if(startingRotation == null) {
                     startingRotation = transform.localRotation.eulerAngles;
                 }
-                Vector2 deltaInput = _inputReader.GetMouseDelta();
+                Vector2 deltaInput = inputReader.GetMouseDelta();
                 startingRotation.x += deltaInput.x * verticalSpeed   * Time.deltaTime;
                 startingRotation.y += deltaInput.y * horizontalSpeed * Time.deltaTime;
                 startingRotation.y = Mathf.Clamp(startingRotation.y, -clampAngle, clampAngle);
