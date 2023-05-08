@@ -29,7 +29,7 @@ public partial class @ThisPlay : IInputActionCollection2, IDisposable
             ""actions"": [
                 {
                     ""name"": ""Move"",
-                    ""type"": ""Value"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""c6ea0c94-5f6e-4550-b516-c76e43d206db"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
@@ -65,7 +65,7 @@ public partial class @ThisPlay : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Look"",
-                    ""type"": ""Value"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""d63a4bb3-eabd-4036-b398-34476dd4ee14"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
@@ -165,7 +165,7 @@ public partial class @ThisPlay : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""1871336c-7ef2-4a27-82d8-8996582761f6"",
-                    ""path"": ""<Pointer>/delta"",
+                    ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

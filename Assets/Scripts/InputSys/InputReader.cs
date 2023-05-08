@@ -32,10 +32,15 @@ public class InputReader : ScriptableObject, ThisPlay.IPlayerActions {
     public event Action PJump  = delegate { };
     public Vector2 MovAxis { get; private set; }
     public Vector2 camAxis { get; private set; }
+    public bool DidJump { get; private set; }
 
     public void OnJump(InputAction.CallbackContext context) {
         if (context.performed) {
             PJump?.Invoke();
+            DidJump = true;
+        }
+        if (context.canceled) {
+            DidJump = false;
         }
     }
 
@@ -53,6 +58,10 @@ public class InputReader : ScriptableObject, ThisPlay.IPlayerActions {
 
     public void OnLook(InputAction.CallbackContext context) {
         this.MovAxis = context.ReadValue<Vector2>();
+    }
+
+    public Vector2 GetMouseDelta() {
+        return _controls.Player.Look.ReadValue<Vector2>();
     }
     #endregion
 }
