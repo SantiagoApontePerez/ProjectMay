@@ -4,7 +4,7 @@ using UnityEngine;
 using Assets.Status;
 using System;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour {
 
     #region Player Movement Variables
@@ -13,10 +13,20 @@ public class PlayerController : MonoBehaviour {
     [SerializeField][Range(50, 999)] private float JumpSpeedMultiplier = 60;
     #endregion
 
+    #region Player General Variables
+    private Vector3 playerVelocity;
+    private bool groundedPlayer;
+    #endregion
+
     #region Required Components
     [Header("Required Components")]
     [SerializeField] private InputReader _inputReader;
-    public Rigidbody rb;
+    public CharacterController cController;
+    #endregion
+
+    #region Required Transforms
+    [Header("Required Transforms")]
+    private Transform cameraTransform;
     #endregion
 
     private void Awake() {
@@ -45,16 +55,28 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        CheckGrounded();
         StandardMove();
     }
 
     private void SetupPlayer() {
-        rb = (rb is null) ? GetComponent<Rigidbody>() : rb;
+        cController = (cController is null) ? gameObject.AddComponent<CharacterController>() : cController;
+        cameraTransform = Camera.main.transform;
     }
 
     #region Movement Functions
+
+    void CheckGrounded() {
+        groundedPlayer = cController.isGrounded;
+        if(groundedPlayer && playerVelocity.y < 0) {
+            playerVelocity.y = 0f;
+        }
+    }
+
     void StandardMove() {
-        Vector3 pMovV3 = new Vector3(_inputReader.MovAxis.x, 0, _inputReader.MovAxis.y);
+        Vector3 pMovV3 = new Vector3(_inputReader.MovAxis.x, 0f, _inputReader.MovAxis.y);
+        pMovV3 = cameraTransform.forward * pMovV3.z + cameraTransform.right * pMovV3.x;
+        pMovV3.y = 0f;
         transform.Translate(MoveSpeedMultiplier * Time.deltaTime * pMovV3);
     }
 
