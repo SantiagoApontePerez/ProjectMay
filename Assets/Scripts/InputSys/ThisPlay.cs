@@ -71,6 +71,15 @@ public partial class @ThisPlay : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""ToggleFlashLight"",
+                    ""type"": ""Button"",
+                    ""id"": ""39f6c1f7-9cfe-422c-a9d6-c923a84fd314"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -172,6 +181,17 @@ public partial class @ThisPlay : IInputActionCollection2, IDisposable
                     ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0f305482-a8f2-4fa9-ad2f-8f88f67a70f9"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleFlashLight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -185,6 +205,7 @@ public partial class @ThisPlay : IInputActionCollection2, IDisposable
         m_Player_MouseRight = m_Player.FindAction("MouseRight", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
+        m_Player_ToggleFlashLight = m_Player.FindAction("ToggleFlashLight", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -249,6 +270,7 @@ public partial class @ThisPlay : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_MouseRight;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Look;
+    private readonly InputAction m_Player_ToggleFlashLight;
     public struct PlayerActions
     {
         private @ThisPlay m_Wrapper;
@@ -258,6 +280,7 @@ public partial class @ThisPlay : IInputActionCollection2, IDisposable
         public InputAction @MouseRight => m_Wrapper.m_Player_MouseRight;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Look => m_Wrapper.m_Player_Look;
+        public InputAction @ToggleFlashLight => m_Wrapper.m_Player_ToggleFlashLight;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -282,6 +305,9 @@ public partial class @ThisPlay : IInputActionCollection2, IDisposable
                 @Look.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
                 @Look.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
                 @Look.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
+                @ToggleFlashLight.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleFlashLight;
+                @ToggleFlashLight.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleFlashLight;
+                @ToggleFlashLight.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleFlashLight;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -301,6 +327,9 @@ public partial class @ThisPlay : IInputActionCollection2, IDisposable
                 @Look.started += instance.OnLook;
                 @Look.performed += instance.OnLook;
                 @Look.canceled += instance.OnLook;
+                @ToggleFlashLight.started += instance.OnToggleFlashLight;
+                @ToggleFlashLight.performed += instance.OnToggleFlashLight;
+                @ToggleFlashLight.canceled += instance.OnToggleFlashLight;
             }
         }
     }
@@ -312,5 +341,6 @@ public partial class @ThisPlay : IInputActionCollection2, IDisposable
         void OnMouseRight(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
+        void OnToggleFlashLight(InputAction.CallbackContext context);
     }
 }

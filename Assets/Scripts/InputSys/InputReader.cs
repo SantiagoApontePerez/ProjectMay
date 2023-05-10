@@ -27,9 +27,10 @@ public class InputReader : ScriptableObject, ThisPlay.IPlayerActions {
 
     #region IPlayerActions *In Game*
 
-    public event Action LClick = delegate { };
-    public event Action RClick = delegate { };
-    public event Action PJump  = delegate { };
+    public event Action LClick   = delegate { };
+    public event Action RClick   = delegate { };
+    public event Action PJump    = delegate { };
+    public event Action TogTorch = delegate { };
     public Vector2 MovAxis { get; private set; }
     public Vector2 camAxis { get; private set; }
     public bool DidJump { get; private set; }
@@ -58,6 +59,12 @@ public class InputReader : ScriptableObject, ThisPlay.IPlayerActions {
 
     public void OnLook(InputAction.CallbackContext context) {
         this.camAxis = context.ReadValue<Vector2>();
+    }
+
+    public void OnToggleFlashLight(InputAction.CallbackContext context) {
+        if(context.performed) {
+            TogTorch?.Invoke();
+        }
     }
     #endregion
 }

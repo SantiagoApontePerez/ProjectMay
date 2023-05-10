@@ -7,20 +7,24 @@ using System;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour {
 
-    #region Player Movement Variables
+    #region Player Movement Variables *Changeable*
     [Header("Player Movement Variables")]
     [Tooltip("Default 5")]
     [SerializeField][Range(000f, 099f)] private float MoveSpeedMultiplier = 5;
-    [Tooltip("Default 60")]
-    [SerializeField][Range(000f, 099f)] private float jumpHeight = 60;
+    [Tooltip("Default 3")]
+    [SerializeField][Range(000f, 010f)] private float jumpHeight = 1;
+    [Tooltip("Gravity default 9.81m/s")]
     [SerializeField]                    private float gravityValue = -9.81f;
-    [SerializeField][Range(0.0f, 0.5f)] private float moveSmoothTime = 0.3f;
+    [Tooltip("Movement smoothing *linear*")]
+    [SerializeField][Range(0.0f, 0.5f)] private float moveSmoothTime = 0.1f;
     #endregion
 
-    #region Player General Variables
-    private Vector3 playerVelocity;
+    #region Player Debug Variables
+    [Header("Debug Values")]
+    [SerializeField] private Vector3 playerVelocity;
     [SerializeField] private float velocityY = 0.0f;
-    private bool    groundedPlayer;
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private bool torchToggle = false;
     #endregion
 
     #region Player Movement Variables
@@ -32,12 +36,19 @@ public class PlayerController : MonoBehaviour {
     [Header("Required Components")]
     [Tooltip("Please place a valid input reader")]
     [SerializeField] private InputReader _inputReader;
-    public CharacterController cController;
+    [Tooltip("Please place a valid character controller")]
+    [SerializeField] private CharacterController cController;
     #endregion
 
     #region Required Transforms
     [Header("Required Transforms")]
+    [Tooltip("This is automatically fetched on runtime")]
     public Transform cameraTransform;
+    #endregion
+
+    #region Required GameObjects
+    [Header("Required GameObjects")]
+    [SerializeField] private GameObject torchLight;
     #endregion
 
     private void Awake() {
@@ -48,6 +59,7 @@ public class PlayerController : MonoBehaviour {
         //_inputReader.LClick += DebugPrint;
         //_inputReader.RClick += DebugPrint;
         //_inputReader.PJump  += OnJump;
+        _inputReader.TogTorch += ToggleTorch;
 
     }
 
@@ -55,6 +67,7 @@ public class PlayerController : MonoBehaviour {
         //_inputReader.LClick -= DebugPrint;
         //_inputReader.RClick -= DebugPrint;
         //_inputReader.PJump  -= OnJump;
+        _inputReader.TogTorch -= ToggleTorch;
     }
 
     // Start is called before the first frame update
@@ -79,6 +92,7 @@ public class PlayerController : MonoBehaviour {
     void CheckGrounded() {
         if(cController.isGrounded) {
             velocityY = 0f;
+            isGrounded = cController.isGrounded; //Debug
         }
     }
 
@@ -89,8 +103,8 @@ public class PlayerController : MonoBehaviour {
         pMovV3.y = 0f;
         cController.Move(pMovV3.normalized * Time.deltaTime * MoveSpeedMultiplier);
 
-        if(_inputReader.DidJump && groundedPlayer) {
-            OnJump();
+        if(_inputReader.DidJump && isGrounded) {
+            AddJumpVel();
         }
 
         playerVelocity.y += gravityValue * Time.deltaTime;
@@ -114,14 +128,14 @@ public class PlayerController : MonoBehaviour {
         cController.Move(velocity * Time.deltaTime);
 
         if (_inputReader.DidJump && cController.isGrounded && !JumpStatus.IsFallingCC(cController)) {
-            OnJump();
+            AddJumpVel();
         }
 
         cController.Move(JumpCalc() * Time.deltaTime);
     }
 
     #region Jump System
-    void OnJump() {
+    void AddJumpVel() {
         velocityY += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
     }
 
@@ -129,5 +143,27 @@ public class PlayerController : MonoBehaviour {
         return new Vector3(0, velocityY, 0);
     }
     #endregion
+    #endregion
+
+    #region Torch System
+    void ToggleTorch() {
+        if(torchToggle == false) {
+            torchToggle = true;
+            UpdateTorch();
+            return;
+        }
+        else if(torchToggle == true) {
+            torchToggle = false;
+            UpdateTorch();
+            return;
+        }
+
+        Debug.Log("Toggle is " + torchToggle);
+    }
+
+    void UpdateTorch() {
+        torchLight.SetActive(torchToggle);
+    }
+
     #endregion
 }
