@@ -157,12 +157,10 @@ public class PlayerController : MonoBehaviour {
         if (canToggleTorch == true) {
             if (torchToggle == false) {
                 torchToggle = true;
+            }else if(torchToggle == true) {
+                torchToggle = false;
             }
         }
-        else if(torchToggle == true) {
-            torchToggle = false;
-        }
-
         Debug.Log("Toggle is " + torchToggle);
     }
 
