@@ -9,6 +9,7 @@ using TMPro;
 public class PlayerController : MonoBehaviour {
 
     #region Player Variables *Changeable*
+    #region Movement
     [Header("Player Movement Variables")]
     [Tooltip("Default 5")]
     [SerializeField][Range(000f, 099f)] private float MoveSpeedMultiplier = 5;
@@ -18,11 +19,18 @@ public class PlayerController : MonoBehaviour {
     [SerializeField]                    private float gravityValue = -9.81f;
     [Tooltip("Movement smoothing *linear*")]
     [SerializeField][Range(0.0f, 0.5f)] private float moveSmoothTime = 0.1f;
+    #endregion
+    #region Torch
     [Header("Torch Variables")]
     [Tooltip("Battery current time in seconds")]
     [SerializeField]                    private float torchBatteryTimer;
     [Tooltip("Battery max time in seconds")]
     [SerializeField]                    private float torchBatteryCapacity = 100;
+    [Tooltip("How quickly the torch battery deplets")]
+    [SerializeField][Range(0.0f, 9.9f)] private float torchDepletionRate = 1;
+    [Tooltip("How quickly the torch battery recharges")]
+    [SerializeField][Range(0.0f, 9.9f)] private float torchRechargeRate = 1;
+    #endregion
     #endregion
 
     #region Player Debug Variables
@@ -32,7 +40,6 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool torchToggle = false;
     [SerializeField] private bool canToggleTorch = true;
-    [SerializeField] private float countTimer = 0.0f;
     #endregion
 
     #region Player Movement Variables
@@ -115,22 +122,6 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    #region Unused Movement Function
-    void StandardMove() {
-        Vector3 pMovV3 = new Vector3(_inputReader.MovAxis.x, 0f, _inputReader.MovAxis.y);
-        pMovV3 = cameraTransform.forward * pMovV3.z + cameraTransform.right * pMovV3.x;
-        pMovV3.y = 0f;
-        cController.Move(pMovV3.normalized * Time.deltaTime * MoveSpeedMultiplier);
-
-        if(_inputReader.DidJump && isGrounded) {
-            AddJumpVel();
-        }
-
-        playerVelocity.y += gravityValue * Time.deltaTime;
-        cController.Move(playerVelocity * Time.deltaTime);
-    }
-    #endregion
-
     void BStandardMovement() {
         Vector2 targetDir = new Vector2(_inputReader.MovAxis.x, _inputReader.MovAxis.y);
         targetDir.Normalize();
@@ -196,7 +187,7 @@ public class PlayerController : MonoBehaviour {
         UpdateTorchActive();
         //If Torch is On, Take away battery and if the torch reaches 0%
         if(torchToggle is true) {
-            torchBatteryTimer -= Time.deltaTime;
+            torchBatteryTimer -= Time.deltaTime * torchDepletionRate;
             torchBatteryTimer = Mathf.Clamp(torchBatteryTimer, 0, torchBatteryCapacity);
             if (torchBatteryTimer <= 0) {
                 torchToggle = false;
@@ -204,22 +195,16 @@ public class PlayerController : MonoBehaviour {
         }
         //If Torch is off, Recharge battery and stop at 100%
         else if(torchToggle is false) {
-            torchBatteryTimer += Time.deltaTime;
+            torchBatteryTimer += Time.deltaTime * torchRechargeRate;
             torchBatteryTimer = Mathf.Clamp(torchBatteryTimer, 0, torchBatteryCapacity);
         }
         //Player can only toggle when the battery is bigger than 1
         canToggleTorch = torchBatteryTimer >= 1 ? true : false;
     }
-
-    int IntTimer() {
-        countTimer += Time.deltaTime; // * 4;
-        int countDown = Mathf.FloorToInt(countTimer);
-        return countDown;
-    }
-
     #endregion
 
     #region HUD
+    /* !!MUST BE PLACED INTO GAME MANAGER!! */
     void UpdateHUD() {
         UpdateUIBattery();
     }
@@ -229,8 +214,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void UpdateUIBattery() {
-        float percent = UIBatteryCalc();
-        hudBatteryPercent.text = percent.ToString("#.00") + "%";
+        hudBatteryPercent.text = UIBatteryCalc().ToString("#.00") + "%";
     }
     #endregion
 }

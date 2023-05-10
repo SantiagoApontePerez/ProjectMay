@@ -2622,12 +2622,13 @@ MonoBehaviour:
   moveSmoothTime: 0.1
   torchBatteryTimer: 5
   torchBatteryCapacity: 20
+  torchDepletionRate: 1
+  torchRechargeRate: 0.25
   playerVelocity: {x: 0, y: 0, z: 0}
   velocityY: 0
   isGrounded: 0
   torchToggle: 0
   canToggleTorch: 1
-  countTimer: 0
   _inputReader: {fileID: 11400000, guid: 72fd5a74c033dae4a965bf10759a5ddf, type: 2}
   cController: {fileID: 1090722260}
   cameraTransform: {fileID: 0}
