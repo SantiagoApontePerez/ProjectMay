@@ -4,11 +4,15 @@ using UnityEngine;
 
 namespace Assets.Status {
     public static class JumpStatus {
-        public static bool IsFalling(Rigidbody rb) {
+        public static bool IsFallingRB(Rigidbody rb) {
             return rb.velocity.y < -0.1f;
         }
 
-        public static bool IsJumping(Rigidbody rb) {
+        public static bool IsFallingCC(CharacterController c) {
+            return c.velocity.y < -0.1f;
+        }
+
+        public static bool IsJumpingRB(Rigidbody rb) {
             return rb.velocity.y > 0.1f;
         }
 

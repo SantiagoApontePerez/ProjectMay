@@ -75,15 +75,14 @@ public class PlayerController : MonoBehaviour {
         cameraTransform = Camera.main.transform;
     }
 
-    #region Movement Functions
-
+    #region Movement System
     void CheckGrounded() {
-        groundedPlayer = cController.isGrounded;
-        if(groundedPlayer && playerVelocity.y < 0) {
-            playerVelocity.y = 0f;
+        if(cController.isGrounded) {
+            velocityY = 0f;
         }
     }
 
+    #region Unused Movement Function
     void StandardMove() {
         Vector3 pMovV3 = new Vector3(_inputReader.MovAxis.x, 0f, _inputReader.MovAxis.y);
         pMovV3 = cameraTransform.forward * pMovV3.z + cameraTransform.right * pMovV3.x;
@@ -97,6 +96,7 @@ public class PlayerController : MonoBehaviour {
         playerVelocity.y += gravityValue * Time.deltaTime;
         cController.Move(playerVelocity * Time.deltaTime);
     }
+    #endregion
 
     void BStandardMovement() {
         Vector2 targetDir = new Vector2(_inputReader.MovAxis.x, _inputReader.MovAxis.y);
@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour {
 
         cController.Move(velocity * Time.deltaTime);
 
-        if (_inputReader.DidJump && cController.isGrounded) {
+        if (_inputReader.DidJump && cController.isGrounded && !JumpStatus.IsFallingCC(cController)) {
             OnJump();
         }
 
