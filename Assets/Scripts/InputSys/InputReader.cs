@@ -59,9 +59,5 @@ public class InputReader : ScriptableObject, ThisPlay.IPlayerActions {
     public void OnLook(InputAction.CallbackContext context) {
         this.camAxis = context.ReadValue<Vector2>();
     }
-
-    public Vector2 GetMouseDelta() {
-        return _controls.Player.Look.ReadValue<Vector2>();
-    }
     #endregion
 }
