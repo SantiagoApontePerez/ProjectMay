@@ -81,6 +81,7 @@ public class PlayerController : MonoBehaviour {
     {
         CheckGrounded();
         BStandardMovement();
+        TorchRotation();
     }
 
     private void SetupPlayer() {
@@ -163,6 +164,13 @@ public class PlayerController : MonoBehaviour {
 
     void UpdateTorch() {
         torchLight.SetActive(torchToggle);
+    }
+
+    void TorchRotation() {
+        Quaternion rotation = torchLight.transform.rotation;
+        rotation.eulerAngles = cameraTransform.eulerAngles;
+
+        torchLight.transform.rotation = rotation;
     }
 
     #endregion
