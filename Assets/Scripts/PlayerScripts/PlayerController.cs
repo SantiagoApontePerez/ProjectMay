@@ -7,7 +7,7 @@ using System;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour {
 
-    #region Player Movement Variables *Changeable*
+    #region Player Variables *Changeable*
     [Header("Player Movement Variables")]
     [Tooltip("Default 5")]
     [SerializeField][Range(000f, 099f)] private float MoveSpeedMultiplier = 5;
@@ -17,6 +17,10 @@ public class PlayerController : MonoBehaviour {
     [SerializeField]                    private float gravityValue = -9.81f;
     [Tooltip("Movement smoothing *linear*")]
     [SerializeField][Range(0.0f, 0.5f)] private float moveSmoothTime = 0.1f;
+    [Header("Torch Variables")]
+    [Tooltip("Battery Size")]
+    [SerializeField]                    private float torchBatteryTimer = 100;
+    [SerializeField]                    private float torchBatteryCapacity = 100;
     #endregion
 
     #region Player Debug Variables
@@ -25,6 +29,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float velocityY = 0.0f;
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool torchToggle = false;
+    [SerializeField] private bool canToggleTorch = true;
+    [SerializeField] private float countTimer = 0.0f;
     #endregion
 
     #region Player Movement Variables
@@ -81,7 +87,7 @@ public class PlayerController : MonoBehaviour {
     {
         CheckGrounded();
         BStandardMovement();
-        TorchRotation();
+        UpdateTorchSys();
     }
 
     private void SetupPlayer() {
@@ -148,22 +154,25 @@ public class PlayerController : MonoBehaviour {
 
     #region Torch System
     void ToggleTorch() {
-        if(torchToggle == false) {
-            torchToggle = true;
-            UpdateTorch();
-            return;
+        if (canToggleTorch == true) {
+            if (torchToggle == false) {
+                torchToggle = true;
+            }
         }
         else if(torchToggle == true) {
             torchToggle = false;
-            UpdateTorch();
-            return;
         }
 
         Debug.Log("Toggle is " + torchToggle);
     }
 
-    void UpdateTorch() {
+    void UpdateTorchActive() {
         torchLight.SetActive(torchToggle);
+    }
+
+    void UpdateTorchSys() {
+        TorchRotation();
+        TorchBattery();
     }
 
     void TorchRotation() {
@@ -171,6 +180,32 @@ public class PlayerController : MonoBehaviour {
         rotation.eulerAngles = cameraTransform.eulerAngles;
 
         torchLight.transform.rotation = rotation;
+    }
+
+    void TorchBattery() {
+        UpdateTorchActive();
+        //If Torch is On, Take away battery and if the torch reaches 0%
+        if(torchToggle is true) {
+            torchBatteryTimer -= Time.deltaTime;
+            torchBatteryTimer = Mathf.Clamp(torchBatteryTimer, 0, torchBatteryCapacity);
+            if (torchBatteryTimer <= 0) {
+                torchToggle = false;
+            }
+        }
+        //If Torch is off, Recharge battery and stop at 100%
+        else if(torchToggle is false) {
+            torchBatteryTimer += Time.deltaTime;
+            torchBatteryTimer = Mathf.Clamp(torchBatteryTimer, 0, torchBatteryCapacity);
+        }
+
+        //Player can only toggle when the battery is bigger than 1
+        canToggleTorch = torchBatteryTimer >= 1 ? true : false;
+    }
+
+    int IntTimer() {
+        countTimer += Time.deltaTime; // * 4;
+        int countDown = Mathf.FloorToInt(countTimer);
+        return countDown;
     }
 
     #endregion
