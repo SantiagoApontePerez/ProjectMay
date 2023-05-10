@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Status;
 using System;
+using TMPro;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour {
@@ -18,8 +19,9 @@ public class PlayerController : MonoBehaviour {
     [Tooltip("Movement smoothing *linear*")]
     [SerializeField][Range(0.0f, 0.5f)] private float moveSmoothTime = 0.1f;
     [Header("Torch Variables")]
-    [Tooltip("Battery Size")]
-    [SerializeField]                    private float torchBatteryTimer = 100;
+    [Tooltip("Battery current time in seconds")]
+    [SerializeField]                    private float torchBatteryTimer;
+    [Tooltip("Battery max time in seconds")]
     [SerializeField]                    private float torchBatteryCapacity = 100;
     #endregion
 
@@ -55,6 +57,9 @@ public class PlayerController : MonoBehaviour {
     #region Required GameObjects
     [Header("Required GameObjects")]
     [SerializeField] private GameObject torchLight;
+
+    [Header("UI Elements")]
+    [SerializeField] private TMP_Text hudBatteryPercent;
     #endregion
 
     private void Awake() {
@@ -79,7 +84,7 @@ public class PlayerController : MonoBehaviour {
     // Start is called before the first frame update
     void Start()
     {
-        
+        SetUpVars();
     }
 
     // Update is called once per frame
@@ -93,6 +98,12 @@ public class PlayerController : MonoBehaviour {
     private void SetupPlayer() {
         cController = (cController is null) ? gameObject.AddComponent<CharacterController>() : cController;
         cameraTransform = Camera.main.transform;
+    }
+
+    private void SetUpVars() {
+        #region Battery Managment
+        torchBatteryTimer = torchBatteryCapacity;
+        #endregion
     }
 
     #region Movement System
@@ -195,7 +206,6 @@ public class PlayerController : MonoBehaviour {
             torchBatteryTimer += Time.deltaTime;
             torchBatteryTimer = Mathf.Clamp(torchBatteryTimer, 0, torchBatteryCapacity);
         }
-
         //Player can only toggle when the battery is bigger than 1
         canToggleTorch = torchBatteryTimer >= 1 ? true : false;
     }
@@ -206,5 +216,15 @@ public class PlayerController : MonoBehaviour {
         return countDown;
     }
 
+    #endregion
+
+    #region HUD
+    public float UIBatteryCalc() {
+        return torchBatteryTimer / torchBatteryCapacity * 100;
+    }
+
+    public void UpdateUIBattery() {
+        hudBatteryPercent.SetText = UIBatteryCalc() + "%"
+    }
     #endregion
 }
