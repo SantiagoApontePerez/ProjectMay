@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private bool canToggleTorch = true;
     #endregion
 
-    #region Player Movement Variables
+    #region Player Movement Variables *Unchangeable*
     Vector2 currentDir    = Vector2.zero;
     Vector2 currentDirVel = Vector2.zero;
     #endregion
@@ -209,12 +209,10 @@ public class PlayerController : MonoBehaviour {
         UpdateUIBattery();
     }
 
-    public float UIBatteryCalc() {
-        return torchBatteryTimer / torchBatteryCapacity * 100;
-    }
+    public float UIBatteryPercentCalc { get { return torchBatteryTimer / torchBatteryCapacity * 100; } }
 
     public void UpdateUIBattery() {
-        hudBatteryPercent.text = UIBatteryCalc().ToString("#.00") + "%";
+        hudBatteryPercent.text = UIBatteryPercentCalc.ToString("#") + "%";
     }
     #endregion
 }
