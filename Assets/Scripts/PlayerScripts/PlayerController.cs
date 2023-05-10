@@ -93,6 +93,7 @@ public class PlayerController : MonoBehaviour {
         CheckGrounded();
         BStandardMovement();
         UpdateTorchSys();
+        UpdateHUD();
     }
 
     private void SetupPlayer() {
@@ -219,12 +220,17 @@ public class PlayerController : MonoBehaviour {
     #endregion
 
     #region HUD
+    void UpdateHUD() {
+        UpdateUIBattery();
+    }
+
     public float UIBatteryCalc() {
         return torchBatteryTimer / torchBatteryCapacity * 100;
     }
 
     public void UpdateUIBattery() {
-        hudBatteryPercent.SetText = UIBatteryCalc() + "%"
+        float percent = UIBatteryCalc();
+        hudBatteryPercent.text = percent.ToString("#.00") + "%";
     }
     #endregion
 }
