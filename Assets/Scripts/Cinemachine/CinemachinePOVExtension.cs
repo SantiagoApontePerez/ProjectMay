@@ -10,7 +10,7 @@ public class CinemachinePOVExtension : CinemachineExtension {
 
     #region Clamps
     [Header("Clamps")]
-    [SerializeField] private float clampAngle = 80f;
+    [SerializeField] private float clampAngle = 90f;
     [SerializeField] private float horizontalSpeed = 10f;
     [SerializeField] private float verticalSpeed = 10f;
     #endregion

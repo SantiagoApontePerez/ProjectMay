@@ -9,18 +9,28 @@ public class PlayerController : MonoBehaviour {
 
     #region Player Movement Variables
     [Header("Player Movement Variables")]
-    [SerializeField][Range(000, 099)] private float MoveSpeedMultiplier = 5;
-    [SerializeField][Range(000, 099)] private float JumpHeight = 60;
-    [SerializeField]                  private float gravityValue = -9.81f;
+    [Tooltip("Default 5")]
+    [SerializeField][Range(000f, 099f)] private float MoveSpeedMultiplier = 5;
+    [Tooltip("Default 60")]
+    [SerializeField][Range(000f, 099f)] private float jumpHeight = 60;
+    [SerializeField]                    private float gravityValue = -9.81f;
+    [SerializeField][Range(0.0f, 0.5f)] private float moveSmoothTime = 0.3f;
     #endregion
 
     #region Player General Variables
     private Vector3 playerVelocity;
-    private bool groundedPlayer;
+    [SerializeField] private float velocityY = 0.0f;
+    private bool    groundedPlayer;
+    #endregion
+
+    #region Player Movement Variables
+    Vector2 currentDir    = Vector2.zero;
+    Vector2 currentDirVel = Vector2.zero;
     #endregion
 
     #region Required Components
     [Header("Required Components")]
+    [Tooltip("Please place a valid input reader")]
     [SerializeField] private InputReader _inputReader;
     public CharacterController cController;
     #endregion
@@ -57,7 +67,7 @@ public class PlayerController : MonoBehaviour {
     void Update()
     {
         CheckGrounded();
-        StandardMove();
+        BStandardMovement();
     }
 
     private void SetupPlayer() {
@@ -88,8 +98,36 @@ public class PlayerController : MonoBehaviour {
         cController.Move(playerVelocity * Time.deltaTime);
     }
 
-    void OnJump() {
-        playerVelocity.y += Mathf.Sqrt(JumpHeight * -3.0f * gravityValue);
+    void BStandardMovement() {
+        Vector2 targetDir = new Vector2(_inputReader.MovAxis.x, _inputReader.MovAxis.y);
+        targetDir.Normalize();
+
+        currentDir = Vector2.SmoothDamp(currentDir, targetDir, ref currentDirVel, moveSmoothTime);
+
+        CheckGrounded();
+
+        velocityY += gravityValue * Time.deltaTime;
+
+        Vector3 velocity = (transform.forward * currentDir.y + transform.right * currentDir.x) * MoveSpeedMultiplier + Vector3.up * velocityY;
+        velocity = cameraTransform.forward * velocity.z + cameraTransform.right * velocity.x;
+
+        cController.Move(velocity * Time.deltaTime);
+
+        if (_inputReader.DidJump && cController.isGrounded) {
+            OnJump();
+        }
+
+        cController.Move(JumpCalc() * Time.deltaTime);
     }
+
+    #region Jump System
+    void OnJump() {
+        velocityY += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+    }
+
+    Vector3 JumpCalc() {
+        return new Vector3(0, velocityY, 0);
+    }
+    #endregion
     #endregion
 }
